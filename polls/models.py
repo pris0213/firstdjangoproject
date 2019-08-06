@@ -12,14 +12,17 @@ class Question(models.Model):
         return self.question_text
 
     def was_published_recently(self):
+        """
+        self.pub_date <= now? "A data de publicação não é no futuro?"
+            ontem* <= pub_date "A data de publicação foi feita há, no máximo, 1 dia?"
+
+            *agora - 1 dia = ontem
+            """
         now = timezone.now()
         return now - datetime.timedelta(days=1) <= self.pub_date <= now
-    """
-    self.pub_date <= now? "A data de publicação não é no futuro?"
-        ontem* <= pub_date "A data de publicação foi feita há, no máximo, 1 dia?"
-        
-        *agora - 1 dia = ontem
-    """
+    was_published_recently.admin_order_field = 'pub_date'
+    was_published_recently.boolean = True
+    was_published_recently.short_description = 'Published recently?'
 
 
 class Choice(models.Model):
